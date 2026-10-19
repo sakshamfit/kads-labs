@@ -32,11 +32,31 @@ from the template's `portfolio.json`) — edit those two files to change any tex
 on the site. The "Start a Project" button mails `site.footer.email`
 (`hello@example.com` placeholder — set the real address there).
 
+## Design & motion — ported from the site template
+
+The app uses the original site template's design system and motion language
+(`kads-labs-website/src/css/00-tokens.css`, `02-components.css`, `03-motion.css`
+and the core runtime `02-core.js`), adapted to React:
+
+| Template feature | Here |
+|---|---|
+| Black theme tokens (true black, near-black surfaces, `--ink` soft white, hairlines, brand red `#fb2629`) | `app/globals.css` `:root` + Tailwind `@theme` (`bg-background`, `text-muted-foreground`, `text-accent`, …) |
+| Lenis smooth scroll (1s, desktop/tablet only, never on phones/coarse pointers) | `components/motion.tsx` `MotionRoot` (`lenis` npm package, synced with GSAP `ScrollTrigger.update`) |
+| Scroll reveals — `[data-reveal]` opacity/y spring, `[data-split]` word rise, `.reveal-image` scale 1.1→1, `[data-stagger]` groups | same attributes, same semantics; runtime in `MotionRoot` (IntersectionObserver, focus + page-end fallbacks) |
+| Motion is opt-in via `html.motion` (set pre-paint by an inline script, never under `prefers-reduced-motion`; without JS nothing is ever hidden) | inline script in `app/layout.tsx` |
+| Tickers — WAAPI translate loops, clones, pause off-screen, hover slow-down | `[data-ticker]` on the hero services marquee and the work strip |
+| Letter rolls on buttons/nav (per-char 12ms stagger) | `.roll` markup + runtime split |
+| Section label pill, buttons (white high-emphasis, outlined pill), chips, cards | `.pill-label`, `.btn--dark/--outline/--light/--sm`, `.chip`, `.card` in `globals.css` |
+| Count-up numbers | `CountUp` component (`components/motion.tsx`) |
+| "View" cursor pill over project tiles | `CursorPill` + `data-cursor="View"` on work cards |
+| Header tone (transparent over the hero, frosted black when scrolled) | `.site-header` + `.is-scrolled` |
+
 ## Project structure (shadcn conventions)
 
 ```
 app/                  routes (App Router): layout.tsx, page.tsx, globals.css
 components/ui/        reusable UI primitives (timeline.tsx, profile-card-…)
+components/motion.tsx the template's motion runtime (Lenis, reveals, tickers, letter rolls) + CountUp + CursorPill
 lib/utils.ts          the shadcn `cn()` helper (clsx + tailwind-merge)
 lib/site-content.ts   ALL site copy (rebranded from the template's content.py)
 lib/work-data.ts      portfolio data (generated from the template's portfolio.json)
@@ -61,6 +81,7 @@ it will pick this structure up.
 | `framer-motion` | Carousel enter/exit transitions | |
 | `lucide-react` | Icons (chevrons, social glyphs) | **pinned to 0.544.0** — v1 removed brand icons (`Github`, `Twitter`, `Youtube`, `Linkedin`) that the carousel imports |
 | `clsx` + `tailwind-merge` | the `cn()` helper | |
+| `lenis` | Smooth scroll (template runtime), desktop only | synced with ScrollTrigger |
 
 ## Design tokens
 

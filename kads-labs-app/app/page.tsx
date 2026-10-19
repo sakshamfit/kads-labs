@@ -4,6 +4,7 @@ import {
   TestimonialCarousel,
   type Testimonial,
 } from "@/components/ui/profile-card-testimonial-carousel";
+import { CountUp } from "@/components/motion";
 import { site } from "@/lib/site-content";
 import { workProjects, type WorkProject } from "@/lib/work-data";
 
@@ -63,27 +64,46 @@ const clientWork = workProjects.filter((p) => p.group === "client");
 const conceptWork = workProjects.filter((p) => p.group === "concept");
 
 /* ------------------------------------------------------------------ */
-/* Small building blocks                                               */
+/* Small building blocks (template vocabulary)                          */
 /* ------------------------------------------------------------------ */
 
-function SectionHead({ label }: { label: string }) {
+/** Section label pill — the template's .pill-label with its status dot. */
+function Pill({ children }: { children: string }) {
   return (
-    <p className="font-mono text-xs uppercase tracking-[0.3em] text-[#ff5f00]">
-      {label}
+    <p className="pill-label" data-reveal="fade">
+      <i aria-hidden="true" />
+      {children}
     </p>
+  );
+}
+
+/** Letter-roll label (the template's .roll — chars split at runtime). */
+function Roll({ text }: { text: string }) {
+  return (
+    <span className="roll">
+      <span>{text}</span>
+      <span aria-hidden="true">
+        {text}
+      </span>
+    </span>
   );
 }
 
 function WorkCard({ project }: { project: WorkProject }) {
   return (
-    <article className="group overflow-hidden rounded-2xl border border-white/10 bg-card transition-colors hover:border-white/25">
-      <div className="relative aspect-[16/10] overflow-hidden">
+    <article
+      className="group overflow-hidden rounded-[24px] bg-card shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_0_0_1px_var(--line-2)] transition-[box-shadow,transform] duration-500 hover:-translate-y-1 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_0_0_1px_var(--line-3),0_24px_48px_-24px_rgba(0,0,0,0.9)]"
+      data-reveal
+      data-cursor="View"
+    >
+      <div className="reveal-image aspect-[16/10]">
         <Image
           src={project.image}
           alt={`${project.title} — website screen`}
-          fill
+          width={640}
+          height={400}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          className="h-full w-full object-cover"
         />
       </div>
       <div className="p-5">
@@ -91,19 +111,21 @@ function WorkCard({ project }: { project: WorkProject }) {
           <span
             className={
               project.group === "client"
-                ? "rounded-full border border-[#ff5f00]/40 px-2.5 py-0.5 text-[11px] font-medium text-[#ff5f00]"
-                : "rounded-full border border-white/15 px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground"
+                ? "rounded-full px-2.5 py-0.5 text-[11px] font-medium text-accent-dot shadow-[inset_0_0_0_1px_rgba(251,38,41,0.35)]"
+                : "rounded-full px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground shadow-[inset_0_0_0_1px_var(--line)]"
             }
           >
             {project.label}
           </span>
-          <span className="text-xs text-muted-foreground">{project.year}</span>
+          <span className="text-xs text-[color:var(--muted-strong)]">
+            {project.year}
+          </span>
         </div>
-        <h3 className="mt-3 text-lg font-semibold tracking-tight">
+        <h3 className="mt-3 text-lg font-semibold tracking-[-0.02em]">
           {project.title}
         </h3>
         <p className="mt-1 text-sm text-muted-foreground">{project.industry}</p>
-        <p className="mt-3 text-xs uppercase tracking-wider text-muted-foreground/70">
+        <p className="mt-3 text-[11px] uppercase tracking-[0.08em] text-[color:var(--muted)]">
           {project.services}
         </p>
       </div>
@@ -112,48 +134,47 @@ function WorkCard({ project }: { project: WorkProject }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Page                                                                */
+/* Page                                                                 */
 /* ------------------------------------------------------------------ */
 
 export default function Home() {
   return (
     <main className="bg-background text-foreground">
-      {/* Header */}
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+      {/* Header (transparent over the hero — .is-scrolled added on scroll) */}
+      <header className="site-header fixed inset-x-0 top-0 z-50" data-header>
+        <div className="mx-auto flex max-w-[1344px] items-center justify-between gap-4 px-6 py-4 lg:px-12">
           <a href="#top" className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/brand/kads-labs-logo.jpg"
               alt="KADS LABS logo"
-              className="h-9 w-9 rounded-full object-cover ring-1 ring-white/20"
+              className="h-9 w-9 rounded-full object-cover shadow-[inset_0_0_0_1px_rgba(255,255,255,0.18)]"
             />
             <span className="text-sm font-semibold tracking-[0.22em]">
               KADS LABS
             </span>
           </a>
-          <nav className="hidden items-center gap-6 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground md:flex">
-            <a href="#create" className="transition-colors hover:text-foreground">
-              What we create
+          <nav className="hidden items-center gap-7 text-[13px] font-medium text-muted-foreground md:flex">
+            <a className="transition-colors hover:text-foreground" href="#create">
+              <Roll text="What we create" />
             </a>
-            <a href="#journey" className="transition-colors hover:text-foreground">
-              How we work
+            <a className="transition-colors hover:text-foreground" href="#journey">
+              <Roll text="How we work" />
             </a>
-            <a href="#work" className="transition-colors hover:text-foreground">
-              The work
+            <a className="transition-colors hover:text-foreground" href="#work">
+              <Roll text="The work" />
             </a>
-            <a href="#faq" className="transition-colors hover:text-foreground">
-              FAQ
+            <a className="transition-colors hover:text-foreground" href="#faq">
+              <Roll text="FAQ" />
             </a>
-            <a href="#team" className="transition-colors hover:text-foreground">
-              The owners
+            <a className="transition-colors hover:text-foreground" href="#team">
+              <Roll text="The owners" />
             </a>
           </nav>
-          <a
-            href="#cta"
-            className="rounded-full bg-[#ff5f00] px-4 py-2 text-xs font-semibold text-[#0a0a0a] transition hover:brightness-110"
-          >
-            {site.hero.ctaPrimary}
+          <a href="#cta" className="btn btn--dark btn--sm">
+            <span className="btn__label">
+              <Roll text={site.hero.ctaPrimary} />
+            </span>
           </a>
         </div>
       </header>
@@ -161,53 +182,111 @@ export default function Home() {
       {/* Hero */}
       <section
         id="top"
-        className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 pt-28 pb-16 text-center"
+        className="flex min-h-screen flex-col items-center justify-center gap-7 px-6 pt-32 pb-10 text-center"
       >
-        <SectionHead label={site.hero.kicker} />
+        <Pill>{site.hero.kicker}</Pill>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/brand/kads-labs-logo.jpg"
           alt="KADS LABS"
-          className="h-24 w-24 rounded-3xl object-cover shadow-2xl ring-1 ring-white/15 sm:h-28 sm:w-28"
+          className="h-24 w-24 rounded-[24px] object-cover shadow-[0_0_0_1px_var(--line-2),0_30px_60px_-30px_rgba(0,0,0,0.9)]"
+          data-reveal="scale"
+          style={{ "--d": "80ms" } as React.CSSProperties}
         />
-        <h1 className="max-w-[18ch] text-4xl font-semibold leading-[0.98] tracking-tight sm:text-6xl md:text-7xl">
+        <h1
+          className="max-w-[16ch] text-[clamp(46px,7.4vw,92px)] font-semibold leading-[1.02] tracking-[var(--track-tight)]"
+          data-split
+        >
           {site.hero.title}
         </h1>
-        <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+        <p
+          className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
+          data-reveal
+          style={{ "--d": "160ms" } as React.CSSProperties}
+        >
           {site.hero.lead}
         </p>
-        <p className="max-w-xl text-sm leading-relaxed text-muted-foreground/80">
+        <p
+          className="max-w-xl text-sm leading-relaxed text-[color:var(--muted-strong)]"
+          data-reveal
+          style={{ "--d": "240ms" } as React.CSSProperties}
+        >
           {site.hero.body}
         </p>
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href="#cta"
-            className="rounded-full bg-[#ff5f00] px-6 py-3 text-sm font-semibold text-[#0a0a0a] transition hover:brightness-110"
-          >
-            {site.hero.ctaPrimary}
+        <div
+          className="mt-2 flex flex-wrap items-center justify-center gap-3"
+          data-reveal
+          style={{ "--d": "320ms" } as React.CSSProperties}
+        >
+          <a href="#cta" className="btn btn--dark">
+            <span className="btn__label">
+              <Roll text={site.hero.ctaPrimary} />
+            </span>
           </a>
-          <a
-            href="#work"
-            className="rounded-full border border-white/20 px-6 py-3 text-sm font-medium transition hover:bg-white/5"
-          >
-            {site.hero.ctaSecondary}
+          <a href="#work" className="btn btn--outline">
+            <span className="btn__label">
+              <Roll text={site.hero.ctaSecondary} />
+            </span>
           </a>
         </div>
-        <span className="mt-4 animate-bounce text-muted-foreground">&darr;</span>
+
+        {/* Services marquee (template hero ticker) */}
+        <div
+          className="mt-10 w-full max-w-[1344px]"
+          aria-hidden="true"
+          data-reveal="fade"
+          style={{ "--d": "420ms" } as React.CSSProperties}
+        >
+          <div className="marquee-track h-12" data-ticker data-speed="25">
+            <ul className="marquee-list" data-ticker-list>
+              {site.services.items.map((service) => (
+                <li key={service.n} className="marquee-item">
+                  <span className="marquee-word">{service.name}</span>
+                  <svg
+                    className="marquee-mark"
+                    viewBox="0 0 12 12"
+                    fill="currentColor"
+                  >
+                    <path d="M6 0l1.7 4.3L12 6 7.7 7.7 6 12 4.3 7.7 0 6l4.3-1.7z" />
+                  </svg>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Work strip (the template's hero gallery, as a looping ticker) */}
+        <div className="w-full" aria-hidden="true">
+          <div className="marquee-track" data-ticker data-speed="70">
+            <ul className="marquee-list" data-ticker-list>
+              {workProjects.map((project) => (
+                <li key={project.slug} className="work-strip__item">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={project.image} alt="" loading="lazy" draggable={false} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </section>
 
       {/* The Idea */}
-      <section id="idea" className="border-t border-white/10">
-        <div className="mx-auto grid max-w-6xl gap-10 px-6 py-24 md:grid-cols-2 md:gap-16">
+      <section id="idea" className="border-t border-[color:var(--line-2)]">
+        <div className="mx-auto grid max-w-[1344px] gap-10 px-6 py-24 md:grid-cols-2 md:gap-16 lg:px-12">
           <div>
-            <SectionHead label={site.idea.label} />
-            <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
+            <Pill>{site.idea.label}</Pill>
+            <h2
+              className="mt-6 text-[clamp(32px,4.6vw,56px)] font-semibold leading-[1.08] tracking-[var(--track-head)]"
+              data-split
+            >
               {site.idea.title[0]}
               <br />
-              <span className="text-muted-foreground">{site.idea.title[1]}</span>
+              <span className="text-[color:var(--muted)]">
+                {site.idea.title[1]}
+              </span>
             </h2>
           </div>
-          <div>
+          <div data-stagger="90">
             <ul className="space-y-3">
               {site.idea.lines.map((line, i) => (
                 <li
@@ -217,20 +296,21 @@ export default function Home() {
                       ? "text-xl font-medium sm:text-2xl"
                       : "text-lg text-muted-foreground line-through decoration-white/25 sm:text-xl"
                   }
+                  data-reveal
                 >
                   {line}
                 </li>
               ))}
             </ul>
-            <p className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground">
+            <p
+              className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground"
+              data-reveal
+            >
               {site.idea.body}
             </p>
-            <div className="mt-6 flex flex-wrap gap-2">
+            <div className="mt-6 flex flex-wrap gap-2" data-reveal>
               {site.idea.disciplines.map((d) => (
-                <span
-                  key={d}
-                  className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted-foreground"
-                >
+                <span key={d} className="chip">
                   {d}
                 </span>
               ))}
@@ -240,26 +320,30 @@ export default function Home() {
       </section>
 
       {/* What We Create */}
-      <section id="create" className="border-t border-white/10">
-        <div className="mx-auto max-w-6xl px-6 py-24">
-          <SectionHead label={site.services.label} />
-          <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
+      <section id="create" className="border-t border-[color:var(--line-2)]">
+        <div className="mx-auto max-w-[1344px] px-6 py-24 lg:px-12">
+          <Pill>{site.services.label}</Pill>
+          <h2
+            className="mt-6 max-w-3xl text-[clamp(32px,4.6vw,56px)] font-semibold leading-[1.08] tracking-[var(--track-head)]"
+            data-split
+          >
             {site.services.title}
           </h2>
-          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p
+            className="mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base"
+            data-reveal
+            style={{ "--d": "120ms" } as React.CSSProperties}
+          >
             {site.services.intro.join(" ")}
           </p>
-          <div className="mt-12 grid gap-4 md:grid-cols-2">
+          <div className="mt-12 grid gap-4 md:grid-cols-2" data-stagger="80">
             {site.services.items.map((service) => (
-              <article
-                key={service.n}
-                className="rounded-2xl border border-white/10 bg-card p-6 transition-colors hover:border-white/25 sm:p-8"
-              >
+              <article key={service.n} className="card p-6 sm:p-8" data-reveal>
                 <div className="flex items-baseline justify-between gap-4">
-                  <h3 className="text-lg font-semibold tracking-tight">
+                  <h3 className="text-lg font-semibold tracking-[-0.02em]">
                     {service.name}
                   </h3>
-                  <span className="font-mono text-sm text-[#ff5f00]">
+                  <span className="text-sm font-medium text-accent">
                     {service.n}
                   </span>
                 </div>
@@ -271,10 +355,7 @@ export default function Home() {
                 )}
                 <div className="mt-5 flex flex-wrap gap-2">
                   {service.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted-foreground"
-                    >
+                    <span key={tag} className="chip">
                       {tag}
                     </span>
                   ))}
@@ -282,7 +363,10 @@ export default function Home() {
               </article>
             ))}
           </div>
-          <div className="mt-12 rounded-2xl border border-white/10 p-6 text-center sm:p-8">
+          <div
+            className="card mt-10 p-8 text-center"
+            data-reveal
+          >
             <p className="text-lg font-semibold">{site.services.ctaTitle}</p>
             {site.services.ctaLines.map((line) => (
               <p key={line} className="mt-1 text-sm text-muted-foreground">
@@ -291,22 +375,29 @@ export default function Home() {
             ))}
             <a
               href="#cta"
-              className="mt-5 inline-block rounded-full border border-white/20 px-6 py-2.5 text-sm font-medium transition hover:bg-white/5"
+              className="mt-6 inline-flex h-12 items-center rounded-full px-6 text-sm font-medium shadow-[inset_0_0_0_1.5px_currentColor] transition-colors hover:bg-foreground hover:text-black"
             >
-              Let&apos;s Talk
+              <Roll text="Let's Talk" />
             </a>
           </div>
         </div>
       </section>
 
       {/* How we work — lead-in, then the pinned horizontal GSAP timeline. */}
-      <section className="border-t border-white/10">
-        <div className="mx-auto max-w-6xl px-6 pt-24 text-center">
-          <SectionHead label={site.approach.label} />
-          <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
+      <section className="border-t border-[color:var(--line-2)]">
+        <div className="mx-auto max-w-[1344px] px-6 pt-24 text-center lg:px-12">
+          <Pill>{site.approach.label}</Pill>
+          <h2
+            className="mx-auto mt-6 max-w-2xl text-[clamp(32px,4.6vw,56px)] font-semibold leading-[1.08] tracking-[var(--track-head)]"
+            data-split
+          >
             {site.approach.title}
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
+          <p
+            className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground"
+            data-reveal
+            style={{ "--d": "120ms" } as React.CSSProperties}
+          >
             Great work doesn&apos;t happen in one step. Keep scrolling — the next
             section pins and each step draws itself as it reaches centre.
           </p>
@@ -315,10 +406,10 @@ export default function Home() {
       <Timeline
         title={site.approach.label}
         periodLabel={site.approach.periodLabel}
-        backgroundColor="var(--color-background, #0a0a0a)"
-        textColor="var(--color-foreground, #ffffff)"
-        mutedTextColor="var(--color-muted-foreground, #a1a1aa)"
-        activeColor="#ff5f00"
+        backgroundColor="var(--color-background, #000000)"
+        textColor="var(--color-foreground, #f4f4f2)"
+        mutedTextColor="var(--color-muted-foreground, rgba(244,244,242,.74))"
+        activeColor="#fb2629"
         imageUrl="/brand/kads-labs-logo.jpg"
         imageAlt="KADS LABS"
         duration={1.4}
@@ -327,31 +418,46 @@ export default function Home() {
       />
 
       {/* The Work */}
-      <section id="work" className="border-t border-white/10">
-        <div className="mx-auto max-w-6xl px-6 py-24">
-          <SectionHead label={site.work.label} />
-          <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
+      <section id="work" className="border-t border-[color:var(--line-2)]">
+        <div className="mx-auto max-w-[1344px] px-6 py-24 lg:px-12">
+          <Pill>{site.work.label}</Pill>
+          <h2
+            className="mt-6 max-w-3xl text-[clamp(32px,4.6vw,56px)] font-semibold leading-[1.08] tracking-[var(--track-head)]"
+            data-split
+          >
             {site.work.title[0]}
             <br />
-            <span className="text-muted-foreground">{site.work.title[1]}</span>
+            <span className="text-[color:var(--muted)]">
+              {site.work.title[1]}
+            </span>
           </h2>
-          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p
+            className="mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base"
+            data-reveal
+            style={{ "--d": "120ms" } as React.CSSProperties}
+          >
             {site.work.intro}
           </p>
 
-          <h3 className="mt-14 font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+          <h3
+            className="mt-16 text-xs font-medium uppercase tracking-[0.28em] text-[color:var(--muted-strong)]"
+            data-reveal="fade"
+          >
             {site.work.clientGroupTitle}
           </h3>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-stagger="80">
             {clientWork.map((project) => (
               <WorkCard key={project.slug} project={project} />
             ))}
           </div>
 
-          <h3 className="mt-16 font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+          <h3
+            className="mt-16 text-xs font-medium uppercase tracking-[0.28em] text-[color:var(--muted-strong)]"
+            data-reveal="fade"
+          >
             {site.work.conceptGroupTitle}
           </h3>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-stagger="80">
             {conceptWork.map((project) => (
               <WorkCard key={project.slug} project={project} />
             ))}
@@ -360,33 +466,40 @@ export default function Home() {
       </section>
 
       {/* What We Believe + Our Numbers */}
-      <section id="believe" className="border-t border-white/10">
-        <div className="mx-auto max-w-6xl px-6 py-24">
-          <SectionHead label={site.believe.label} />
-          <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
+      <section id="believe" className="border-t border-[color:var(--line-2)]">
+        <div className="mx-auto max-w-[1344px] px-6 py-24 lg:px-12">
+          <Pill>{site.believe.label}</Pill>
+          <h2
+            className="mt-6 max-w-3xl text-[clamp(32px,4.6vw,56px)] font-semibold leading-[1.08] tracking-[var(--track-head)]"
+            data-split
+          >
             {site.believe.title}
           </h2>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
+          <div className="mt-10 grid gap-4 md:grid-cols-3" data-stagger="90">
             {site.believe.body.map((paragraph, i) => (
               <p
                 key={i}
-                className="rounded-2xl border border-white/10 bg-card p-6 text-sm leading-relaxed text-muted-foreground"
+                className="card p-6 text-sm leading-relaxed text-muted-foreground"
+                data-reveal
               >
                 {paragraph}
               </p>
             ))}
           </div>
 
-          <div className="mt-20">
-            <SectionHead label={site.numbers.label} />
-            <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="mt-24">
+            <Pill>{site.numbers.label}</Pill>
+            <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4" data-stagger="90">
               {site.numbers.items.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="rounded-2xl border border-white/10 bg-card p-6"
-                >
-                  <p className="text-3xl font-semibold tracking-tight text-[#ff5f00] sm:text-4xl">
-                    {stat.value}
+                <div key={stat.label} className="card p-6" data-reveal>
+                  <p className="text-3xl font-semibold tracking-[-0.03em] text-accent sm:text-4xl">
+                    {stat.value === "20K+" ? (
+                      <CountUp to={20} suffix="K+" />
+                    ) : stat.value === "2M+" ? (
+                      <CountUp to={2} suffix="M+" />
+                    ) : (
+                      stat.value
+                    )}
                   </p>
                   <p className="mt-2 text-sm text-muted-foreground">
                     {stat.label}
@@ -394,7 +507,10 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            <p
+              className="mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground"
+              data-reveal
+            >
               {site.numbers.body}
             </p>
           </div>
@@ -402,19 +518,26 @@ export default function Home() {
       </section>
 
       {/* A Different Kind of Agency */}
-      <section id="agency" className="border-t border-white/10">
-        <div className="mx-auto grid max-w-6xl gap-10 px-6 py-24 md:grid-cols-2 md:gap-16">
+      <section id="agency" className="border-t border-[color:var(--line-2)]">
+        <div className="mx-auto grid max-w-[1344px] gap-10 px-6 py-24 md:grid-cols-2 md:gap-16 lg:px-12">
           <div>
-            <SectionHead label={site.agency.label} />
-            <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
+            <Pill>{site.agency.label}</Pill>
+            <h2
+              className="mt-6 text-[clamp(32px,4.6vw,56px)] font-semibold leading-[1.08] tracking-[var(--track-head)]"
+              data-split
+            >
               {site.agency.title}
             </h2>
-            <p className="mt-4 font-medium text-[#ff5f00]">
+            <p
+              className="mt-4 font-medium text-accent"
+              data-reveal
+              style={{ "--d": "120ms" } as React.CSSProperties}
+            >
               {site.agency.kicker}
             </p>
           </div>
-          <div>
-            <p className="text-base leading-relaxed sm:text-lg">
+          <div data-stagger="90">
+            <p className="text-base leading-relaxed sm:text-lg" data-reveal>
               {site.agency.body}
             </p>
             <ul className="mt-6 space-y-2">
@@ -422,28 +545,31 @@ export default function Home() {
                 <li
                   key={not}
                   className="text-muted-foreground line-through decoration-white/30"
+                  data-reveal
                 >
                   {not}
                 </li>
               ))}
             </ul>
-            <p className="mt-6 font-medium">{site.agency.closing}</p>
+            <p className="mt-6 font-medium" data-reveal>
+              {site.agency.closing}
+            </p>
           </div>
         </div>
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="border-t border-white/10">
+      <section id="faq" className="border-t border-[color:var(--line-2)]">
         <div className="mx-auto max-w-3xl px-6 py-24">
-          <SectionHead label={site.faq.label} />
-          <div className="mt-8 divide-y divide-white/10 rounded-2xl border border-white/10 bg-card px-6">
+          <Pill>{site.faq.label}</Pill>
+          <div className="card mt-8 divide-y divide-[color:var(--line-2)] px-6" data-reveal>
             {site.faq.items.map((item) => (
               <details key={item.q} className="group py-5">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold sm:text-base [&::-webkit-details-marker]:hidden">
                   {item.q}
                   <span
                     aria-hidden="true"
-                    className="shrink-0 font-mono text-lg text-muted-foreground transition-transform group-open:rotate-45"
+                    className="shrink-0 text-lg font-normal text-accent transition-transform duration-300 [transition-timing-function:var(--ease)] group-open:rotate-45"
                   >
                     +
                   </span>
@@ -463,41 +589,49 @@ export default function Home() {
         className="flex min-h-screen flex-col items-center justify-center gap-10 px-6 py-24"
       >
         <div className="text-center">
-          <SectionHead label="Who's behind it" />
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
+          <Pill>Who&apos;s behind it</Pill>
+          <h2
+            className="mt-6 text-[clamp(32px,4.6vw,56px)] font-semibold leading-[1.08] tracking-[var(--track-head)]"
+            data-split
+          >
             The owners
           </h2>
         </div>
-        <TestimonialCarousel testimonials={owners} />
+        <div data-reveal style={{ "--d": "160ms" } as React.CSSProperties}>
+          <TestimonialCarousel testimonials={owners} />
+        </div>
       </section>
 
       {/* Client Stories */}
-      <section id="stories" className="border-t border-white/10">
-        <div className="mx-auto max-w-6xl px-6 py-24">
+      <section id="stories" className="border-t border-[color:var(--line-2)]">
+        <div className="mx-auto max-w-[1344px] px-6 py-24 lg:px-12">
           <div className="flex flex-wrap items-center gap-3">
-            <SectionHead label={site.stories.label} />
-            <span className="rounded-full border border-white/15 px-2.5 py-0.5 text-[11px] text-muted-foreground">
+            <Pill>{site.stories.label}</Pill>
+            <span
+              className="rounded-full px-2.5 py-0.5 text-[11px] text-muted-foreground shadow-[inset_0_0_0_1px_var(--line)]"
+              data-reveal="fade"
+            >
               {site.stories.sampleTag}
             </span>
           </div>
-          <h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-5xl">
+          <h2
+            className="mt-6 text-[clamp(32px,4.6vw,56px)] font-semibold leading-[1.08] tracking-[var(--track-head)]"
+            data-split
+          >
             {site.stories.title}
           </h2>
-          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3" data-stagger="90">
             {site.stories.items.map((story) => (
-              <figure
-                key={story.project}
-                className="flex flex-col rounded-2xl border border-white/10 bg-card p-6"
-              >
-                <span className="text-sm font-medium text-[#ff5f00]">
+              <figure key={story.project} className="card flex flex-col p-6" data-reveal>
+                <span className="text-sm font-medium text-accent">
                   ★ {story.rating.toFixed(1)}
                 </span>
-                <blockquote className="mt-3 text-sm leading-relaxed text-foreground/90">
+                <blockquote className="mt-3 text-sm leading-relaxed text-[color:var(--ink-2)]">
                   &ldquo;{story.quote}&rdquo;
                 </blockquote>
                 <figcaption className="mt-auto pt-5">
                   <span className="text-sm font-semibold">{story.project}</span>
-                  <span className="mt-0.5 block text-xs text-muted-foreground">
+                  <span className="mt-0.5 block text-xs text-[color:var(--muted-strong)]">
                     {story.industry}
                   </span>
                 </figcaption>
@@ -508,30 +642,39 @@ export default function Home() {
       </section>
 
       {/* Final CTA */}
-      <section id="cta" className="border-t border-white/10">
+      <section id="cta" className="border-t border-[color:var(--line-2)]">
         <div className="mx-auto flex max-w-4xl flex-col items-center px-6 py-28 text-center">
-          <SectionHead label={site.cta.label} />
-          <h2 className="mt-4 text-4xl font-semibold leading-[1] tracking-tight sm:text-6xl">
+          <Pill>{site.cta.label}</Pill>
+          <h2
+            className="mt-6 text-[clamp(40px,6vw,80px)] font-semibold leading-[1.02] tracking-[var(--track-tight)]"
+            data-split
+          >
             {site.cta.title}
           </h2>
-          <div className="mt-6 space-y-1 text-sm text-muted-foreground sm:text-base">
+          <div className="mt-6 space-y-1 text-sm text-muted-foreground sm:text-base" data-reveal>
             {[...site.cta.lines, ...site.cta.lines2].map((line) => (
               <p key={line}>{line}</p>
             ))}
           </div>
           <a
             href={`mailto:${site.footer.email}`}
-            className="mt-8 rounded-full bg-[#ff5f00] px-8 py-4 text-sm font-semibold text-[#0a0a0a] transition hover:brightness-110"
+            className="btn btn--dark mt-8"
+            data-reveal
+            style={{ "--d": "160ms" } as React.CSSProperties}
           >
-            {site.cta.cta}
+            <span className="btn__label">
+              <Roll text={site.cta.cta} />
+            </span>
           </a>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 px-6 py-12 text-center">
-        <p className="text-sm text-muted-foreground">{site.footer.line}</p>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs uppercase tracking-wider text-muted-foreground">
+      <footer className="border-t border-[color:var(--line-2)] px-6 py-12 text-center">
+        <p className="text-sm text-muted-foreground" data-reveal="fade">
+          {site.footer.line}
+        </p>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs uppercase tracking-[0.14em] text-[color:var(--muted-strong)]">
           {site.footer.services.map((service) => (
             <span key={service}>{service}</span>
           ))}
@@ -539,7 +682,7 @@ export default function Home() {
         <p className="mt-8 text-xs font-semibold tracking-[0.25em]">
           {site.footer.motto}
         </p>
-        <p className="mt-6 text-xs text-muted-foreground">
+        <p className="mt-6 text-xs text-[color:var(--muted)]">
           {site.footer.copyright}
         </p>
       </footer>

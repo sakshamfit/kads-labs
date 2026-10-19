@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { MotionRoot, CursorPill } from "@/components/motion";
 import "./globals.css";
 
 /* Self-hosted Inter Tight (SIL OFL) — carried over from the studio's site
@@ -36,16 +37,27 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0a",
+  themeColor: "#000000",
 };
+
+/* Sets html.motion before first paint (the template's gate: motion is opt-in
+   and never runs for visitors who asked for reduced motion). suppressHydration
+   on <html> keeps React from touching the class this script adds. */
+const motionScript = `(function(d){try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('motion')}catch(e){}})(document.documentElement)`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${interTight.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <script dangerouslySetInnerHTML={{ __html: motionScript }} />
+        <MotionRoot />
+        <CursorPill />
+        {children}
+      </body>
     </html>
   );
 }

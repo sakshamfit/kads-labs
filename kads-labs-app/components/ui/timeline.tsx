@@ -379,26 +379,24 @@ export default function Timeline({
       return timeline;
     };
 
-    const positions: ReadonlyArray<readonly [number, number]> =
-      window.innerWidth < 600
-        ? [
-            [22, 32],
-            [28, 38],
-            [36, 46],
-            [45, 55],
-            [52, 62],
-            [60, 70],
-            [69, 79],
-          ]
-        : [
-            [6, 26],
-            [16, 36],
-            [26, 46],
-            [35, 55],
-            [45, 65],
-            [55, 75],
-            [65, 85],
-          ];
+    /* Scroll windows for each milestone, evenly stepped across the pinned
+       section. Same overall span as the original 7-item layout, generalized
+       so any item count works (KADS LABS uses 9 approach steps). */
+    const makePositions = (
+      count: number,
+      isMobile: boolean
+    ): ReadonlyArray<readonly [number, number]> => {
+      const first = isMobile ? 22 : 6;
+      const last = isMobile ? 69 : 65;
+      const width = isMobile ? 10 : 20;
+      const step = count > 1 ? (last - first) / (count - 1) : 0;
+      return Array.from({ length: count }, (_, i) => {
+        const start = Math.round(first + step * i);
+        return [start, start + width] as const;
+      });
+    };
+
+    const positions = makePositions(items.length, window.innerWidth < 600);
 
     items.forEach((item, index) => {
       const [startPos, endPos] = positions[index];

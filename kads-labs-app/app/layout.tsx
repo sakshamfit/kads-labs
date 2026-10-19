@@ -26,11 +26,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://sakshamfit.github.io/kads-labs/"),
   title: "KADS LABS — Design & Build Studio",
   description:
-    "KADS LABS designs and builds websites, products and digital experiences for businesses that want to be different.",
+    "KADS LABS creates interactive, thoughtful and tailor-made websites and digital experiences for businesses that want to be different.",
   openGraph: {
     title: "KADS LABS — Design & Build Studio",
     description:
-      "Websites, products and digital experiences for businesses that want to be different.",
+      "We create interactive, thoughtful and tailor-made digital experiences for businesses that want to be different.",
     images: ["/brand/kads-labs-logo.jpg"],
   },
 };

@@ -12,17 +12,25 @@ npm run lint
 
 ## What's on the page
 
-| Section | Component | Notes |
+| Section | Source of the content | Notes |
 |---|---|---|
-| Hero | `app/page.tsx` | KADS LABS logo (from `public/brand/`) + lead-in for the pinned section. |
-| **How we work** | `components/ui/timeline.tsx` | GSAP ScrollTrigger + SplitText timeline. The section pins, the track slides sideways, and each of the 7 steps (Discover → Evolve) draws its stem and reveals its copy as it reaches centre. Respects `prefers-reduced-motion`. |
-| **The owners** | `components/ui/profile-card-testimonial-carousel.tsx` | framer-motion profile-card carousel showing the founder and co-founders (photos in `public/team/`). Arrow buttons + dots navigate; social icons render only when a URL is provided. |
-| Footer | `app/page.tsx` | Brand motto + copyright. |
+| Hero | `lib/site-content.ts` | "We don't build ordinary websites." + CTAs, KADS LABS logo. |
+| The Idea | `lib/site-content.ts` | The template's idea statement + disciplines. |
+| What We Create | `lib/site-content.ts` | 8 services with tags (Website Design → Digital Strategy). |
+| **How we work** | `lib/site-content.ts` → `components/ui/timeline.tsx` | GSAP ScrollTrigger + SplitText timeline. The section pins, the track slides sideways, and each of the 9 steps (Understand → Evolve, the template's Our Approach) draws its stem and reveals its copy as it reaches centre. Respects `prefers-reduced-motion`. |
+| The Work | `lib/work-data.ts` + `public/work/` | 26 projects (12 client, 14 concepts) from the template's portfolio, each with a still. |
+| What We Believe + Our Numbers | `lib/site-content.ts` | Believe statements + 4 stats. |
+| A Different Kind of Agency | `lib/site-content.ts` | The "no unnecessary layers" block. |
+| FAQ | `lib/site-content.ts` | 7 questions, native `<details>` accordion. |
+| **The owners** | `app/page.tsx` → `components/ui/profile-card-testimonial-carousel.tsx` | framer-motion profile-card carousel showing the founder and co-founders (photos in `public/team/`). Social icons render only when a URL is provided. |
+| Client Stories | `lib/site-content.ts` | Sample quotes carried over from the template (tagged "Sample stories") — replace with real client feedback before launch. |
+| Final CTA + footer | `lib/site-content.ts` | "Have an idea?" + services + motto. |
 
-Both components were integrated from ready-made React components and adapted
-for content via props (`topItems` / `bottomItems` for the timeline,
-`testimonials` for the carousel) — edit the data at the top of
-`app/page.tsx` to change the copy. No other files need touching.
+All copy lives in **`lib/site-content.ts`** (rebranded from the original site
+template's `content.py`) and the portfolio in **`lib/work-data.ts`** (generated
+from the template's `portfolio.json`) — edit those two files to change any text
+on the site. The "Start a Project" button mails `site.footer.email`
+(`hello@example.com` placeholder — set the real address there).
 
 ## Project structure (shadcn conventions)
 
@@ -30,7 +38,9 @@ for content via props (`topItems` / `bottomItems` for the timeline,
 app/                  routes (App Router): layout.tsx, page.tsx, globals.css
 components/ui/        reusable UI primitives (timeline.tsx, profile-card-…)
 lib/utils.ts          the shadcn `cn()` helper (clsx + tailwind-merge)
-public/               brand/ (logo), team/ (founder & co-founders)
+lib/site-content.ts   ALL site copy (rebranded from the template's content.py)
+lib/work-data.ts      portfolio data (generated from the template's portfolio.json)
+public/               brand/ (logo), team/ (founder & co-founders), work/ (project stills)
 app/fonts/            self-hosted Inter Tight (SIL OFL) — zero font CDN calls
 ```
 

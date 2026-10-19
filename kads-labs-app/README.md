@@ -29,8 +29,45 @@ npm run lint
 All copy lives in **`lib/site-content.ts`** (rebranded from the original site
 template's `content.py`) and the portfolio in **`lib/work-data.ts`** (generated
 from the template's `portfolio.json`) — edit those two files to change any text
-on the site. The "Start a Project" button mails `site.footer.email`
-(`hello@example.com` placeholder — set the real address there).
+on the site.
+
+## The background — KineticGrid
+
+The whole site sits on a live, interactive canvas: **`components/ui/kinetic-grid.tsx`**,
+mounted once in `app/layout.tsx` as `<KineticGrid globalColor="red" />`. It renders
+a fixed, click-through, viewport-sized `<canvas>` (z-0, `pointer-events: none`)
+behind the content: a blue-black (`#07070c`) warping dot-grid whose lines glow
+brand-red near a smoothly-lerped cursor, with a red ripple on every click.
+Because it is canvas-only (no wrapper `div`), the timeline's `position: sticky`
+pinning keeps working right on top of it. Under `prefers-reduced-motion` it
+draws one static frame and attaches no listeners; it also renders on mobile
+(sized via `visualViewport`). Sections use transparent backgrounds so the grid
+stays visible down the whole page.
+
+## Start a Project — the brief form → WhatsApp
+
+Every "Start a Project" button (header, hero, CTA) and every footer service
+chip opens a modal brief form instead of a mailto. It's built in
+**`components/start-project.tsx`**:
+
+- `StartProjectProvider` (mounted in `app/layout.tsx`) exposes
+  `useStartProject().open(preset?)`; `<StartProjectButton>` wraps any element
+  (including the template's letter-roll `.btn` markup).
+- The form: **what do you need** chips (Website, E-commerce, Branding,
+  Interactive & 3D, Product / SaaS, AI & Automation, Digital Strategy,
+  Something else — multi-select), **name** (required), business, budget range
+  and free-text details. Submit stays disabled until at least one need + a
+  name are given.
+- Submit is a `wa.me` deep link: it opens **WhatsApp on +91 89482 68643**
+  (`site.contact.whatsapp` in `lib/site-content.ts`) with the brief
+  pre-written — greeting, Name, Business, "Need: …" (chips joined), Budget and
+  details.
+- Footer chips pre-select the matching need (Web Design/Development → Website,
+  E-commerce → E-commerce, Branding → Branding, Interactive → Interactive & 3D,
+  Product → Product / SaaS, AI → AI & Automation).
+- While open: body scroll locks and `window.__lenis` (if present) stops;
+  Escape or clicking the backdrop closes and resumes. The CTA section also has
+  a direct WhatsApp line for people who'd rather skip the form.
 
 ## Design & motion — ported from the site template
 
@@ -51,11 +88,18 @@ and the core runtime `02-core.js`), adapted to React:
 | "View" cursor pill over project tiles | `CursorPill` + `data-cursor="View"` on work cards |
 | Header tone (transparent over the hero, frosted black when scrolled) | `.site-header` + `.is-scrolled` |
 
+The palette was retuned for the kinetic background: the base is now a
+blue-black (`--background` `#07070c`, near-black navy surfaces `#0d0f18` /
+`#151829` / `#1d2136`) instead of flat `#000`, so the canvas's red glow reads
+against it. Brand red stays `#fb2629`; the KineticGrid's `red` theme uses the
+same family (`251,38,41`).
+
 ## Project structure (shadcn conventions)
 
 ```
 app/                  routes (App Router): layout.tsx, page.tsx, globals.css
-components/ui/        reusable UI primitives (timeline.tsx, profile-card-…)
+components/ui/        reusable UI primitives (timeline.tsx, kinetic-grid.tsx, profile-card-…)
+components/start-project.tsx  brief modal + WhatsApp deep-link flow (provider, button)
 components/motion.tsx the template's motion runtime (Lenis, reveals, tickers, letter rolls) + CountUp + CursorPill
 lib/utils.ts          the shadcn `cn()` helper (clsx + tailwind-merge)
 lib/site-content.ts   ALL site copy (rebranded from the template's content.py)
@@ -85,10 +129,11 @@ it will pick this structure up.
 
 ## Design tokens
 
-Dark-first theme in `app/globals.css` (`--background` `#0a0a0a`,
-`--foreground` `#fafafa`, `--muted-foreground`, `--card`, `--border`) exposed
+Dark-first theme in `app/globals.css` (`--background` `#07070c`,
+`--foreground` `#f4f4f2`, `--muted-foreground`, `--card`, `--border`) exposed
 to Tailwind via `@theme inline`. Class-based dark mode (`<html class="dark">`)
-is on permanently — the studio site is black.
+is on permanently — the studio site is dark, with a blue-black base tuned to
+the kinetic canvas behind it.
 
 ## Deploying
 

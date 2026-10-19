@@ -5,6 +5,7 @@ import {
   type Testimonial,
 } from "@/components/ui/profile-card-testimonial-carousel";
 import { CountUp } from "@/components/motion";
+import { StartProjectButton } from "@/components/start-project";
 import { site } from "@/lib/site-content";
 import { workProjects, type WorkProject } from "@/lib/work-data";
 
@@ -133,13 +134,24 @@ function WorkCard({ project }: { project: WorkProject }) {
   );
 }
 
+/** Footer service chips open the form with the matching need pre-selected. */
+const FOOTER_SERVICE_NEED: Record<string, string> = {
+  "Web Design": "Website",
+  Development: "Website",
+  "E-commerce": "E-commerce",
+  Interactive: "Interactive & 3D",
+  Branding: "Branding",
+  Product: "Product / SaaS",
+  AI: "AI & Automation",
+};
+
 /* ------------------------------------------------------------------ */
 /* Page                                                                 */
 /* ------------------------------------------------------------------ */
 
 export default function Home() {
   return (
-    <main className="bg-background text-foreground">
+    <main className="relative z-10 text-foreground">
       {/* Header (transparent over the hero — .is-scrolled added on scroll) */}
       <header className="site-header fixed inset-x-0 top-0 z-50" data-header>
         <div className="mx-auto flex max-w-[1344px] items-center justify-between gap-4 px-6 py-4 lg:px-12">
@@ -171,11 +183,11 @@ export default function Home() {
               <Roll text="The owners" />
             </a>
           </nav>
-          <a href="#cta" className="btn btn--dark btn--sm">
+          <StartProjectButton className="btn btn--dark btn--sm">
             <span className="btn__label">
               <Roll text={site.hero.ctaPrimary} />
             </span>
-          </a>
+          </StartProjectButton>
         </div>
       </header>
 
@@ -218,17 +230,25 @@ export default function Home() {
           data-reveal
           style={{ "--d": "320ms" } as React.CSSProperties}
         >
-          <a href="#cta" className="btn btn--dark">
+          <StartProjectButton className="btn btn--dark">
             <span className="btn__label">
               <Roll text={site.hero.ctaPrimary} />
             </span>
-          </a>
+          </StartProjectButton>
           <a href="#work" className="btn btn--outline">
             <span className="btn__label">
               <Roll text={site.hero.ctaSecondary} />
             </span>
           </a>
         </div>
+
+        <p
+          className="text-xs text-[color:var(--muted)]"
+          data-reveal="fade"
+          style={{ "--d": "400ms" } as React.CSSProperties}
+        >
+          The background is live — move your cursor, click anywhere.
+        </p>
 
         {/* Services marquee (template hero ticker) */}
         <div
@@ -373,12 +393,12 @@ export default function Home() {
                 {line}
               </p>
             ))}
-            <a
-              href="#cta"
+            <StartProjectButton
               className="mt-6 inline-flex h-12 items-center rounded-full px-6 text-sm font-medium shadow-[inset_0_0_0_1.5px_currentColor] transition-colors hover:bg-foreground hover:text-black"
+              ariaLabel="Let's talk — start a project"
             >
               <Roll text="Let's Talk" />
-            </a>
+            </StartProjectButton>
           </div>
         </div>
       </section>
@@ -406,7 +426,7 @@ export default function Home() {
       <Timeline
         title={site.approach.label}
         periodLabel={site.approach.periodLabel}
-        backgroundColor="var(--color-background, #000000)"
+        backgroundColor="transparent"
         textColor="var(--color-foreground, #f4f4f2)"
         mutedTextColor="var(--color-muted-foreground, rgba(244,244,242,.74))"
         activeColor="#fb2629"
@@ -656,15 +676,22 @@ export default function Home() {
               <p key={line}>{line}</p>
             ))}
           </div>
+          <span data-reveal style={{ "--d": "160ms" } as React.CSSProperties}>
+            <StartProjectButton className="btn btn--dark">
+              <span className="btn__label">
+                <Roll text={site.cta.cta} />
+              </span>
+            </StartProjectButton>
+          </span>
           <a
-            href={`mailto:${site.footer.email}`}
-            className="btn btn--dark mt-8"
-            data-reveal
-            style={{ "--d": "160ms" } as React.CSSProperties}
+            href={`https://wa.me/${site.contact.whatsapp}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 text-xs text-muted-foreground underline decoration-white/25 underline-offset-4 transition-colors hover:text-foreground"
+            data-reveal="fade"
+            style={{ "--d": "240ms" } as React.CSSProperties}
           >
-            <span className="btn__label">
-              <Roll text={site.cta.cta} />
-            </span>
+            or message us directly on WhatsApp — {site.contact.whatsappDisplay}
           </a>
         </div>
       </section>
@@ -676,7 +703,14 @@ export default function Home() {
         </p>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs uppercase tracking-[0.14em] text-[color:var(--muted-strong)]">
           {site.footer.services.map((service) => (
-            <span key={service}>{service}</span>
+            <StartProjectButton
+              key={service}
+              preset={FOOTER_SERVICE_NEED[service] ?? service}
+              className="cursor-pointer transition-colors hover:text-foreground"
+              ariaLabel={`Start a ${service} project`}
+            >
+              {service}
+            </StartProjectButton>
           ))}
         </div>
         <p className="mt-8 text-xs font-semibold tracking-[0.25em]">

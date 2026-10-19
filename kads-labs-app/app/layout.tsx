@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { MotionRoot, CursorPill } from "@/components/motion";
+import { StartProjectProvider } from "@/components/start-project";
+import KineticGrid from "@/components/ui/kinetic-grid";
 import "./globals.css";
 
 /* Self-hosted Inter Tight (SIL OFL) — carried over from the studio's site
@@ -37,7 +39,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#000000",
+  themeColor: "#07070c",
 };
 
 /* Sets html.motion before first paint (the template's gate: motion is opt-in
@@ -56,7 +58,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: motionScript }} />
         <MotionRoot />
         <CursorPill />
-        {children}
+        {/* Interactive background: kinetic grid that warps toward the pointer
+            and ripples on click. Fixed canvas behind the page (the page content
+            sits at z-10; see app/page.tsx). */}
+        <KineticGrid globalColor="red" />
+        <StartProjectProvider>{children}</StartProjectProvider>
       </body>
     </html>
   );

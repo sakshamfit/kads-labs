@@ -9,6 +9,45 @@
 export const site = {
   name: "KADS LABS",
 
+  contact: {
+    // The studio's WhatsApp number: +91 89482 68643.
+    whatsapp: "918948268643",
+    whatsappDisplay: "+91 89482 68643",
+  },
+
+  startProject: {
+    title: "Start a Project",
+    sub: "Tell us what you need — your brief opens straight into our WhatsApp.",
+    needsLabel: "What do you need?",
+    needs: [
+      "Website",
+      "E-commerce",
+      "Branding",
+      "Interactive & 3D",
+      "Product / SaaS",
+      "AI & Automation",
+      "Digital Strategy",
+      "Something else",
+    ],
+    nameLabel: "Your name",
+    namePlaceholder: "What should we call you?",
+    businessLabel: "Business / brand",
+    businessPlaceholder: "Optional",
+    budgetLabel: "Estimated budget",
+    budget: [
+      "Under ₹25,000",
+      "₹25,000 – ₹75,000",
+      "₹75,000 – ₹2,00,000",
+      "₹2,00,000+",
+      "Not sure yet",
+    ],
+    detailsLabel: "Tell us a little about your idea",
+    detailsPlaceholder: "What are you building? Who is it for? Any deadline?",
+    submit: "Continue on WhatsApp",
+    hint: "Opens WhatsApp with your brief pre-filled — nothing is sent until you press send.",
+    needHint: "Pick at least one and add your name to continue.",
+  },
+
   hero: {
     kicker: "Website design & development studio",
     title: "We don't build ordinary websites.",
@@ -265,7 +304,5 @@ export const site = {
     services: ["Web Design", "Development", "E-commerce", "Interactive", "Branding", "Product", "AI"],
     motto: "BUILT DIFFERENT. BUILT FOR YOU.",
     copyright: "© 2026 KADS LABS. All rights reserved.",
-    // TODO: set the studio's real email (placeholder kept from the template).
-    email: "hello@example.com",
   },
 } as const;
